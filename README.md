@@ -72,8 +72,6 @@ The account needs a `workers.dev` subdomain before deploy will succeed. Register
 npx wrangler deploy
 ```
 
-<!-- screenshot: terminal output of npx wrangler deploy, including the workers.dev URL -->
-
 `workers_dev` is enabled, so the command prints a URL like:
 
 ```text
@@ -85,8 +83,6 @@ That URL is public. The signing secret is what stops anyone else from pushing ev
 ### 5. Secrets
 
 Create the Pocket webhook in the next section before these commands if you do not already have the signing secret. Pocket shows that secret once. The Grok Bot routine panel is where you copy the webhook URL and the Authorization value.
-
-<!-- screenshot: Grok Bot routine panel showing the webhook URL and the Authorization value -->
 
 Each command prompts for the value and hides what you type. The value is not an argument, and it is not stored in this repo. Each `wrangler secret put` saves the secret and deploys a version that includes it ([secrets](https://developers.cloudflare.com/workers/configuration/secrets/)).
 
@@ -108,11 +104,7 @@ Dashboard alternative: [Workers & Pages](https://dash.cloudflare.com/) → **poc
 
 In the Pocket app, open the integrations UI for personal webhooks. Organization owners can use the [organization webhook API](https://docs.heypocketai.com/docs/api/webhooks) instead. Paste the `workers.dev` URL into the webhook URL field.
 
-<!-- screenshot: Pocket webhook settings with the workers.dev URL in the URL field -->
-
 Pocket shows the signing secret once, in the dialog that appears when the webhook is created. Copy it into the `POCKET_SIGNING_SECRET` prompt before you close the dialog. Deleting the webhook and adding it again rotates the secret, so run `npx wrangler secret put POCKET_SIGNING_SECRET` again after a rotation.
-
-<!-- screenshot: Pocket's one-time signing secret dialog -->
 
 Pocket sends `POST` with `Content-Type: application/json`, `X-HeyPocket-Signature`, and `X-HeyPocket-Timestamp`. One recording produces several events (`recording.created`, `transcription.completed`, `summary.completed`, action-item events, and others). This Worker forwards each of them. Filter and dedupe inside the Grok Bot routine. [GROK_BOT_SETUP.md](GROK_BOT_SETUP.md) tells the assistant how to write that routine.
 
@@ -131,8 +123,6 @@ POCKET_SIGNING_SECRET='the pocket secret' node scripts/send-test.mjs https://poc
 ```
 
 The script sends a `summary.completed` payload. `200` means the signature was valid and the routine returned 2xx. A real end-to-end check is a short Pocket recording: the routine should run when Pocket emits `transcription.completed`.
-
-<!-- screenshot: a successful Grok Bot routine run for a transcription.completed event -->
 
 The same log lines show in the dashboard under the Worker → **Observability** → **Logs**.
 
