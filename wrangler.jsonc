@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "pocket-webhook-to-grok-bot",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-05",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "upload_source_maps": true,
+  // Workers Logs. `enabled` is what surfaces console.log / console.error in the dashboard.
+  // Traces are on too so a failed relay can be followed from Pocket's POST to the outbound fetch.
+  // This Worker is a low-volume webhook, so both are sampled at 100%. No KV, Durable Objects, or other paid bindings.
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1
+    },
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 1
+    }
+  }
+}
